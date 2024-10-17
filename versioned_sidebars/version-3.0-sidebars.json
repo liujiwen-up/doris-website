@@ -86,7 +86,19 @@
             "type": "category",
             "label": "Data Table Design",
             "items": [
+                "table-design/overview",
                 "table-design/data-type",
+                {
+                    "type": "category",
+                    "label": "Table Indexes",
+                    "items": [
+                        "table-design/index/index-overview",
+                        "table-design/index/prefix-index",
+                        "table-design/index/inverted-index",
+                        "table-design/index/bloomfilter",
+                        "table-design/index/ngram-bloomfilter-index"
+                    ]
+                },
                 {
                     "type": "category",
                     "label": "Data Models",
@@ -102,17 +114,6 @@
                 "table-design/data-partition",
                 "table-design/schema-change",
                 "table-design/cold-hot-separation",
-                {
-                    "type": "category",
-                    "label": "Table Indexes",
-                    "items": [
-                        "table-design/index/index-overview",
-                        "table-design/index/prefix-index",
-                        "table-design/index/inverted-index",
-                        "table-design/index/bloomfilter",
-                        "table-design/index/ngram-bloomfilter-index"
-                    ]
-                },
                 "table-design/auto-increment",
                 "table-design/best-practice"
             ]
@@ -344,7 +345,7 @@
                 "compute-storage-decoupled/overview",
                 "compute-storage-decoupled/before-deployment",
                 "compute-storage-decoupled/compilation-and-deployment",
-                "compute-storage-decoupled/creating-cluster",
+                "compute-storage-decoupled/managing-storage-vault",
                 "compute-storage-decoupled/managing-compute-cluster",
                 "compute-storage-decoupled/file-cache",
                 "compute-storage-decoupled/meta-service-api"
@@ -844,6 +845,7 @@
                                 "sql-manual/sql-functions/string-functions/from-base64",
                                 "sql-manual/sql-functions/string-functions/ascii",
                                 "sql-manual/sql-functions/string-functions/auto-partition-name",
+                                "sql-manual/sql-functions/string-functions/crc32",
                                 "sql-manual/sql-functions/string-functions/length",
                                 "sql-manual/sql-functions/string-functions/bit-length",
                                 "sql-manual/sql-functions/string-functions/char-length",
@@ -885,6 +887,7 @@
                                 "sql-manual/sql-functions/string-functions/split-by-string",
                                 "sql-manual/sql-functions/string-functions/substring-index",
                                 "sql-manual/sql-functions/string-functions/money-format",
+                                "sql-manual/sql-functions/string-functions/ngram-search",
                                 "sql-manual/sql-functions/string-functions/parse-url",
                                 "sql-manual/sql-functions/string-functions/quote",
                                 "sql-manual/sql-functions/string-functions/url-decode",
@@ -1002,7 +1005,9 @@
                                 "sql-manual/sql-functions/aggregate-functions/regr_sxy",
                                 "sql-manual/sql-functions/aggregate-functions/regr_syy",
                                 "sql-manual/sql-functions/aggregate-functions/sequence-match",
-                                "sql-manual/sql-functions/aggregate-functions/sequence-count"
+                                "sql-manual/sql-functions/aggregate-functions/sequence-count",
+                                "sql-manual/sql-functions/aggregate-functions/kurt",
+                                "sql-manual/sql-functions/aggregate-functions/skew"
                             ]
                         },
                         {
@@ -1668,7 +1673,9 @@
             "type": "category",
             "label": "v3.0",
             "items": [
-                "releasenotes/v3.0/release-3.0.1"
+                "releasenotes/v3.0/release-3.0.0",
+                "releasenotes/v3.0/release-3.0.1",
+                "releasenotes/v3.0/release-3.0.2"
             ]
         },
         {
@@ -1688,6 +1695,7 @@
             "type": "category",
             "label": "v2.0",
             "items": [
+                "releasenotes/v2.0/release-2.0.15",
                 "releasenotes/v2.0/release-2.0.14",
                 "releasenotes/v2.0/release-2.0.13",
                 "releasenotes/v2.0/release-2.0.12",

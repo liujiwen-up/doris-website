@@ -332,6 +332,7 @@
                         "lakehouse/database/clickhouse",
                         "lakehouse/database/sap-hana",
                         "lakehouse/database/oceanbase",
+                        "lakehouse/database/gbase-8a",
                         "lakehouse/database/es",
                         "lakehouse/database/max-compute"
                     ]
@@ -352,7 +353,7 @@
                 "compute-storage-decoupled/overview",
                 "compute-storage-decoupled/before-deployment",
                 "compute-storage-decoupled/compilation-and-deployment",
-                "compute-storage-decoupled/creating-cluster",
+                "compute-storage-decoupled/managing-storage-vault",
                 "compute-storage-decoupled/managing-compute-cluster",
                 "compute-storage-decoupled/file-cache",
                 "compute-storage-decoupled/meta-service-api"
@@ -853,6 +854,7 @@
                                 "sql-manual/sql-functions/string-functions/from-base64",
                                 "sql-manual/sql-functions/string-functions/ascii",
                                 "sql-manual/sql-functions/string-functions/auto_partition_name",
+                                "sql-manual/sql-functions/string-functions/crc32",
                                 "sql-manual/sql-functions/string-functions/length",
                                 "sql-manual/sql-functions/string-functions/bit-length",
                                 "sql-manual/sql-functions/string-functions/char-length",
@@ -895,6 +897,7 @@
                                 "sql-manual/sql-functions/string-functions/split-by-regexp",
                                 "sql-manual/sql-functions/string-functions/substring-index",
                                 "sql-manual/sql-functions/string-functions/money-format",
+                                "sql-manual/sql-functions/string-functions/ngram-search",
                                 "sql-manual/sql-functions/string-functions/parse-url",
                                 "sql-manual/sql-functions/string-functions/quote",
                                 "sql-manual/sql-functions/string-functions/url-decode",
@@ -1012,7 +1015,9 @@
                                 "sql-manual/sql-functions/aggregate-functions/regr_sxy",
                                 "sql-manual/sql-functions/aggregate-functions/regr_syy",
                                 "sql-manual/sql-functions/aggregate-functions/sequence-match",
-                                "sql-manual/sql-functions/aggregate-functions/sequence-count"
+                                "sql-manual/sql-functions/aggregate-functions/sequence-count",
+                                "sql-manual/sql-functions/aggregate-functions/kurt",
+                                "sql-manual/sql-functions/aggregate-functions/skew"
                             ]
                         },
                         {
@@ -1688,7 +1693,9 @@
             "type": "category",
             "label": "v3.0",
             "items": [
-                "releasenotes/v3.0/release-3.0.1"
+                "releasenotes/v3.0/release-3.0.0",
+                "releasenotes/v3.0/release-3.0.1",
+                "releasenotes/v3.0/release-3.0.2"
             ]
         },
         {
@@ -1708,6 +1715,7 @@
             "type": "category",
             "label": "v2.0",
             "items": [
+                "releasenotes/v2.0/release-2.0.15",
                 "releasenotes/v2.0/release-2.0.14",
                 "releasenotes/v2.0/release-2.0.13",
                 "releasenotes/v2.0/release-2.0.12",
