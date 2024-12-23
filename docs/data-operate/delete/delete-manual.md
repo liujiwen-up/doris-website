@@ -185,7 +185,7 @@ Delete command is a SQL command that return results synchronously. The results a
 If Delete completes successfully and is visible, the following results are returned.`Query OK`indicates success.
 
 ```sql
-mysql delete from test_tbl PARTITION p1 where k1 = 1;
+mysql> delete from test_tbl PARTITION p1 where k1 = 1;
 Query OK, 0 rows affected (0.04 sec)
 {'label':'delete_e7830c72-eb14-4cb9-bbb6-eebd4511d251', 'status':'VISIBLE', 'txnId':'4005'}
 ```
@@ -199,7 +199,7 @@ If the commit has been successful, then it can be assumed that it will eventuall
  If Delete has been submitted and executed, but the release version is still not published and visible, the following result will be returned:
 
 ```sql
-mysql delete from test_tbl PARTITION p1 where k1 = 1;
+mysql> delete from test_tbl PARTITION p1 where k1 = 1;
 Query OK, 0 rows affected (0.04 sec)
 {'label':'delete_e7830c72-eb14-4cb9-bbb6-eebd4511d251', 'status':'COMMITTED', 'txnId':'4005', 'err':'delete job is committed but may be taking effect later' }
 ```
@@ -221,14 +221,14 @@ The result will also return a json string:
 If the Delete statement fails to commit, the transaction will be automatically aborted by Doris and the following result will be returned:
 
 ```sql
-mysql delete from test_tbl partition p1 where k1  80;
+mysql> delete from test_tbl partition p1 where k1 > 80;
 ERROR 1064 (HY000): errCode = 2, detailMessage = {Cause of error}
 ```
 
 For example, a timeout deletion will return the timeout time and the outstanding `(tablet=replica)`
 
 ```sql
-mysql delete from test_tbl partition p1 where k1  80;
+mysql> delete from test_tbl partition p1 where k1 > 80;
 ERROR 1064 (HY000): errCode = 2, detailMessage = failed to delete replicas from job: 4005, Unfinished replicas:10000=60000, 10001=60000, 10002=60000
 ```
 
@@ -244,27 +244,13 @@ The correct logic for handling the results returned by Delete is:
 
   - If `STATUS` is `VISIBLE`, the deletion is successful.
 
-## FE Configurations
+## Configurations
 
 **TIMEOUT Configurations**
 
-总体来说，Doris 的删除作业的超时时间计算规则为如下（单位：秒）：
+- `insert_timeout`
 
-Overall, the timeout calculation rules for Doris Delete jobs are as follows (in seconds):
-
-```Plain
-TIMEOUT = MIN(delete_job_max_timeout_second, MAX(30, tablet_delete_timeout_second * tablet_num))
-```
-
-- `tablet_delete_timeout_second`
-
-The delete timeout time is elastically changed by the number of tablets under the specified partition. This item is configured so that the default value of the timeout time contributed by one tablet on average is 2.
-
-Assuming that there are 5 tablets under the partition specified for this deletion, the timeout time available for delete is 10 seconds, and since it is less than the minimum timeout time of 30 seconds, the final timeout time is 30 seconds.
-
-- `query_timeout`
-
-Because delete itself is a SQL command, the delete statement is also subject to session limitations. Timeout is also affected by the `query_timeout` value in the session, which can be increased in seconds by `SET query_timeout = xxx`.
+Because delete itself is a SQL command and treated as a special kind of insert, the delete statement also subject to session limitations. Timeout is determined by the `insert_timeout` value in the session, which can be increased in seconds by `SET insert_timeout = xxx`.
 
 **IN Predicate Configuration**
 
@@ -285,7 +271,7 @@ SHOW DELETE [FROM db_name]
 ### Example
 
 ```sql
-mysql show delete from test_db;
+mysql> show delete from test_db;
 +-----------+---------------+---------------------+-----------------+----------+
 | TableName | PartitionName | CreateTime          | DeleteCondition | State    |
 +-----------+---------------+---------------------+-----------------+----------+

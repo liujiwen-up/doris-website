@@ -56,21 +56,21 @@ The following import methods support data import in CSV format:
 
 [Stream Load](./import-way/stream-load-manual.md) 
 
-```
-curl --location-trusted -u <doris_user>:<doris_password>
-    -H "Expect:100-continue"
-    -H "line_delimiter:\n"
-    -H "columns_delimiter:|"
-    -H "enclose:'"
-    -H "escape:\"
-    -H "skip_lines:2"
-    -T streamload_example.csv 
+```shell
+curl --location-trusted -u <doris_user>:<doris_password> \
+    -H "Expect:100-continue" \
+    -H "line_delimiter:\n" \
+    -H "columns_delimiter:|" \
+    -H "enclose:'" \
+    -H "escape:\\" \
+    -H "skip_lines:2" \
+    -T streamload_example.csv \
     -XPUT http://<fe_ip>:<fe_http_port>/api/testdb/test_streamload/_stream_load
 ```
 
 [Broker Load](./import-way/broker-load-manual.md)
-```
-LOAD LABEL example_db.exmpale_label_1
+```sql
+LOAD LABEL example_db.example_label_1
 (
     DATA INFILE("s3://your_bucket_name/your_file.txt")
     INTO TABLE load_test
@@ -89,11 +89,11 @@ WITH S3
     "AWS_ACCESS_KEY" = "AWS_ACCESS_KEY",
     "AWS_SECRET_KEY"="AWS_SECRET_KEY",
     "AWS_REGION" = "AWS_REGION"
-);
+)
 ```
 
 [Routine Load](./import-way/routine-load-manual.md)
-```
+```sql
 CREATE ROUTINE LOAD demo.kafka_job01 ON routine_test01
      COLUMNS TERMINATED BY "|",
      COLUMNS(id, name, age)
@@ -112,7 +112,7 @@ CREATE ROUTINE LOAD demo.kafka_job01 ON routine_test01
 ```
 
 [MySQL Load](./import-way/mysql-load-manual.md)
-```
+```sql
 LOAD DATA LOCAL
 INFILE "testData"
 INTO TABLE testDb.testTbl
@@ -203,7 +203,7 @@ Currently only the following three JSON formats are supported:
   
 - fuzzy_parse parameters
 
-  In [STREAM LOAD](../../sql-manual/sql-statements/Data-Manipulation-Statements/Load/STREAM-LOAD.md) `fuzzy_parse` parameter can be added to speed up JSON Data import efficiency.
+  In [STREAM LOAD](../../data-operate/import/import-way/stream-load-manual.md) `fuzzy_parse` parameter can be added to speed up JSON Data import efficiency.
   
   This parameter is usually used to import the format of **multi-line data represented by Array**, so it is generally used with `strip_outer_array=true`.
   
@@ -390,7 +390,7 @@ Import statement 3:
 Compared with the  import statement 1 and import statement 2, the columns field `k1_copy` is added here.
 Table Structure:
 
-```
+```text
 k2 int, k1 int, k1_copy int
 ```
 
@@ -422,13 +422,13 @@ Compared with the  import statement 1 and import statement 2, the columns field 
 
 Table Structure:
 
-```
+```text
 k2 int, k1 int, k1_nested1 int, k1_nested2 int
 ```
 If you want to assign multi-level fields with the same name nested in json to different columns in the table, you can specify the column in jsonPaths and specify the mapping order in turn. An example are as follows:
 
 ```shell
-curl -v --location-trusted -u root: -H "format: json" -H "jsonpaths: [\"$.k2\", \"$.k1\",\"$.k3.k1\",\"$.k3.k1_nested.k1\" -H "columns: k2,k1,k1_nested1,k1_nested2" -T example.json http://127.0.0.1:8030/api/db1/tbl1/_stream_load
+curl -v --location-trusted -u root: -H "format: json" -H "jsonpaths: [\"$.k2\", \"$.k1\",\"$.k3.k1\",\"$.k3.k1_nested.k1\"]" -H "columns: k2,k1,k1_nested1,k1_nested2" -T example.json http://127.0.0.1:8030/api/db1/tbl1/_stream_load
 ```
 
 The above example will extract the fields in the order of the JSON Path, specifying that the first column is the value of the `k2` column in the table, the second column is the value of the `k1` column in the table, and the third column is the `k1` column in the nested type. The value of the `k1_nested1` column, from which we know that the `k3.k1_nested.k1` column is the value of the `k1_nested2` column in the table. The final imported data results are as follows:
@@ -538,7 +538,7 @@ Suppose the table structure is:
 
 ```text
 id INT NOT NULL,
-city VARHCAR NULL,
+city VARCHAR NULL,
 code INT NULL
 ```
 
@@ -628,12 +628,12 @@ Import result:
 
 4. Import multi-line data as multi-line Object
 
- ```json
- {"id": 100, "city": "beijing", "code" : 1}
- {"id": 101, "city": "shanghai"}
- {"id": 102, "city": "tianjin", "code" : 3}
- {"id": 103, "city": "chongqing", "code" : 4}
- ```
+```json
+{"id": 100, "city": "beijing", "code" : 1}
+{"id": 101, "city": "shanghai"}
+{"id": 102, "city": "tianjin", "code" : 3}
+{"id": 103, "city": "chongqing", "code" : 4}
+```
 
 StreamLoad import:
 
@@ -681,11 +681,11 @@ we suggest you to use JSON string to import data to `array<decimal>` or `array<l
 ```
 
 ```shell
-curl --location-trusted -u root:  -H "max_filter_ratio:0.01" -H "format:json" -H "timeout:300" -T test_decimal.json http://localhost:8035/api/example_db/array_test_decimal/_stream_load
+curl --location-trusted -u root:  -H "max_filter_ratio:0.01" -H "format:json" -H "timeout:300" -T test_decimal.json http://localhost:8030/api/example_db/array_test_decimal/_stream_load
 ```
 
 Import result:
-```
+```shell
 MySQL > select * from array_test_decimal;
 +------+----------------------------------+
 | k1   | k2                               |
@@ -701,11 +701,11 @@ MySQL > select * from array_test_decimal;
 ```
 
 ```shell
-curl --location-trusted -u root:  -H "max_filter_ratio:0.01" -H "format:json" -H "timeout:300" -T test_largeint.json http://localhost:8035/api/example_db/array_test_largeint/_stream_load
+curl --location-trusted -u root:  -H "max_filter_ratio:0.01" -H "format:json" -H "timeout:300" -T test_largeint.json http://localhost:8030/api/example_db/array_test_largeint/_stream_load
 ```
 
 Import result:
-```
+```shell
 MySQL > select * from array_test_largeint;
 +------+------------------------------------------------------------------------------------+
 | k1   | k2                                                                                 |
@@ -732,17 +732,17 @@ The following import methods support importing data in CSV format:
 
 [Stream Load](./import-way/stream-load-manual.md) 
 
-```
-curl --location-trusted -u <doris_user>:<doris_password>
-    -H "Expect:100-continue"
-    -H "format:parquet"
-    -T streamload_example.parquet
+```shell
+curl --location-trusted -u <doris_user>:<doris_password> \
+    -H "Expect:100-continue" \
+    -H "format:parquet" \
+    -T streamload_example.parquet \
     -XPUT http://<fe_ip>:<fe_http_port>/api/testdb/test_streamload/_stream_load
 ```
 
 [Broker Load](./import-way/broker-load-manual.md)
-```
-LOAD LABEL example_db.exmpale_label_1
+```sql
+LOAD LABEL example_db.example_label_1
 (
     DATA INFILE("s3://your_bucket_name/your_file.parquet")
     INTO TABLE load_test
@@ -769,17 +769,17 @@ The following import methods support importing data in CSV format:
 
 [Stream Load](./import-way/stream-load-manual.md) 
 
-```
-curl --location-trusted -u <doris_user>:<doris_password>
-    -H "Expect:100-continue"
-    -H "format:orc"
-    -T streamload_example.orc
+```shell
+curl --location-trusted -u <doris_user>:<doris_password> \
+    -H "Expect:100-continue" \
+    -H "format:orc" \
+    -T streamload_example.orc \
     -XPUT http://<fe_ip>:<fe_http_port>/api/testdb/test_streamload/_stream_load
 ```
 
 [Broker Load](./import-way/broker-load-manual.md)
-```
-LOAD LABEL example_db.exmpale_label_1
+```sql
+LOAD LABEL example_db.example_label_1
 (
     DATA INFILE("s3://your_bucket_name/your_file.orc")
     INTO TABLE load_test

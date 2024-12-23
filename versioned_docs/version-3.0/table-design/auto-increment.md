@@ -43,9 +43,9 @@ Doris ensures that the values generated on the auto-increment column are dense, 
 
 ## Syntax
 
-To use auto-increment columns, you need to add the `AUTO_INCREMENT` attribute to the corresponding column during table creation ([CREATE-TABLE](../sql-manual/sql-statements/Data-Definition-Statements/Create/CREATE-TABLE)). To manually specify the starting value for an auto-increment column, you can do so by using the `AUTO_INCREMENT(start_value)` statement when creating the table. If not specified, the default starting value is 1.
+To use auto-increment columns, you need to add the `AUTO_INCREMENT` attribute to the corresponding column during table creation ([CREATE-TABLE](../sql-manual/sql-statements/table-and-view/table/CREATE-TABLE)). To manually specify the starting value for an auto-increment column, you can do so by using the `AUTO_INCREMENT(start_value)` statement when creating the table. If not specified, the default starting value is 1.
 
-### Examples
+## Examples
 
 1. Creating a Duplicate table with one key column as an auto-increment column:
 
@@ -456,7 +456,7 @@ select * from records_tbl order by `key`, `name` limit 100;
 Fetching the data for the second page can be accomplished by:
 
 ```sql
-select * from records_tbl order by `key`, `name` limit 100, offset 100;
+select * from records_tbl order by `key`, `name` limit 100 offset 100;
 ```
 
 However, when performing deep pagination queries (with large offsets), even if the actual required data rows are few, this method still reads all data into memory for full sorting before subsequent processing, which is quite inefficient. Using an auto-incrementa column assigns a unique value to each row, allowing the use of where `unique_value` > x limit y to filter a significant amount of data beforehand, making pagination more efficient.

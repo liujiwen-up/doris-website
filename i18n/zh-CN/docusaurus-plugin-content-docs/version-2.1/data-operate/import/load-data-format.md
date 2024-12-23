@@ -24,7 +24,7 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-Doris 支持对csv、json、parquet、orc格式的数据文件进行导入。本文对各种文件格式支持的导入方式、适用参数、使用方式进行详细的介绍。
+Doris 支持对 csv、json、parquet、orc 格式的数据文件进行导入。本文对各种文件格式支持的导入方式、适用参数、使用方式进行详细的介绍。
 
 ## CSV 格式
 ### 支持的导入方式
@@ -33,10 +33,10 @@ Doris 支持对csv、json、parquet、orc格式的数据文件进行导入。本
 - [Broker Load](./import-way/broker-load-manual.md)
 - [Routine Load](./import-way/routine-load-manual.md)
 - [MySQL Load](./import-way/mysql-load-manual.md)
-- [INSERT INTO FROM S3 TVF](../../sql-manual/sql-functions/table-functions/s3)
-- [INSERT INTO FROM HDFS TVF](../../sql-manual/sql-functions/table-functions/hdfs)
+- [INSERT INTO FROM S3 TVF](../../sql-manual/sql-functions/table-valued-functions/s3)
+- [INSERT INTO FROM HDFS TVF](../../sql-manual/sql-functions/table-valued-functions/hdfs)
 
-### 支持的CSV格式
+### 支持的 CSV 格式
 - csv: 文件不带 header 和 type
 - csv_with_names: 文件带 header，会自动文件行首过滤
 - csv_with_names_and_types: 文件带 header 和 type，会自动对文件前两行过滤
@@ -45,32 +45,32 @@ Doris 支持对csv、json、parquet、orc格式的数据文件进行导入。本
 
 | 参数       | 参数说明                                                     | 指定方法                                                     |
 | :--------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 行分隔符   | 用于指定导入文件中的换行符，默认为 `\n`。可以使用做多个字符的组合作为换行符。对于Windows系统上的文本文件，可能需要指定换行符为 `\r\n`。某些程序在写入文件时可能会使用 `\r`作为行终止符，需要指定 `\r` 为换行符。| <p>- Stream     Load： `line_delimiter` Http Header</p> <p>- Broker Load :`LINES TERMINATED BY`</p> <p>- Routine Load : 不支持</p>  <p>- MySQL Load :`LINES TERMINATED BY`</p> |
-| 列分隔符   | 用于指定导入文件中的列分隔符，默认为 `\t`。如果是不可见字符，则需要加 `\x` 作为前缀，使用十六进制来表示分隔符。可以使用多个字符的组合作为列分隔符。因为 MySQL 协议会做转义处理，如果列分隔符是不可见字符，通过 MySQL 协议提交的导入请求需要在列分隔字符前面多加一个反斜线 `\`。例如，Hive的文件分隔符为 `\x01`，Broker Load 需要传入 `\\x01`。 | <p>- Stream     Load： `columns_delimiter` Http Header</p> <p>- Broker Load :`COLUMNS TERMINATED BY`</p> <p>- Routine Load :`COLUMNS TERMINATED BY`</p> <p>- MySQL Load :`COLUMNS TERMINATED BY`</p> |
+| 行分隔符   | 用于指定导入文件中的换行符，默认为 `\n`。可以使用做多个字符的组合作为换行符。对于 Windows 系统上的文本文件，可能需要指定换行符为 `\r\n`。某些程序在写入文件时可能会使用 `\r`作为行终止符，需要指定 `\r` 为换行符。| <p>- Stream     Load： `line_delimiter` Http Header</p> <p>- Broker Load :`LINES TERMINATED BY`</p> <p>- Routine Load : 不支持</p>  <p>- MySQL Load :`LINES TERMINATED BY`</p> |
+| 列分隔符   | 用于指定导入文件中的列分隔符，默认为 `\t`。如果是不可见字符，则需要加 `\x` 作为前缀，使用十六进制来表示分隔符。可以使用多个字符的组合作为列分隔符。因为 MySQL 协议会做转义处理，如果列分隔符是不可见字符，通过 MySQL 协议提交的导入请求需要在列分隔字符前面多加一个反斜线 `\`。例如，Hive 的文件分隔符为 `\x01`，Broker Load 需要传入 `\\x01`。 | <p>- Stream     Load： `columns_delimiter` Http Header</p> <p>- Broker Load :`COLUMNS TERMINATED BY`</p> <p>- Routine Load :`COLUMNS TERMINATED BY`</p> <p>- MySQL Load :`COLUMNS TERMINATED BY`</p> |
 | 包围符     | 当 CSV 数据字段中含有行分隔符或列分隔符时，为防止意外截断，可指定单字节字符作为包围符起到保护作用，默认值：`NONE`。最常用包围符为单引号 `'` 或双引号 `"`。例如列分隔符为 `,`，包围符为 `'`，数据为 `a,'b,c'`，则 `b,c` 会被解析为一个字段。 | <p>- Stream     Load： `enclose` Http Header</p> <p>- Broker Load : `PROPERTIES` 里指定 `enclose`</p> <p> Routine Load: `PROPERTIES` 里指定 `enclose`</p> <p> MySQL Load: `PROPERTIES` 里指定 `enclose`</p> |
 | 转义符     | 用于转义在字段中出现的与包围符相同的字符。例如数据为 `a,'b,'c'`，包围符为 `'`，希望 `b,'c` 被作为一个字段解析，则需要指定单字节转义符，例如`\`，将数据修改为 `a,'b,\'c'`。 | <p>- Stream     Load： `escape` Http Header</p> <p>- Broker Load : `PROPERTIES` 里指定 `escape`</p> <p> Routine Load: `PROPERTIES` 里指定 `escape`</p> <p> MySQL Load: `PROPERTIES` 里指定 `escape`</p> |
 | 跳过的行数 | 跳过 CSV 文件的前几行，整数类型，默认值为 0。当设置 format 设置为 `csv_with_names`或`csv_with_names_and_types`时，该参数会失效。 | <p>- Stream     Load： `skip_lines` Http Header</p> <p>- Broker Load : `PROPERTIES` 里指定 `skip_lines`</p> <p> MySQL Load: 不支持</p> <p> Routine Load: 不支持</p> |
-| 压缩格式   | CSV 格式数据支持以下压缩格式：plain, gz, lzo, bz2, lz4, LZ4FRAME,lzop, deflate。默认是plain，表示不压缩。不支持 tar 格式， tar 只是归档打包工具，不是压缩格式。 | <p>- Stream     Load： `compress_type` Http Header</p> <p>- Broker Load : `COMPRESS_TYPE AS`</p> <p> MySQL Load: 不支持</p> <p> Routine Load: 不支持</p> |
+| 压缩格式   | CSV 格式数据支持以下压缩格式：plain, gz, lzo, bz2, lz4, LZ4FRAME,lzop, deflate。默认是 plain，表示不压缩。不支持 tar 格式，tar 只是归档打包工具，不是压缩格式。 | <p>- Stream     Load： `compress_type` Http Header</p> <p>- Broker Load : `COMPRESS_TYPE AS`</p> <p> MySQL Load: 不支持</p> <p> Routine Load: 不支持</p> |
 
 #### 导入示例
 
 [Stream Load](./import-way/stream-load-manual.md) 
 
-```
-curl --location-trusted -u <doris_user>:<doris_password>
-    -H "Expect:100-continue"
-    -H "line_delimiter:\n"
-    -H "columns_delimiter:|"
-    -H "enclose:'"
-    -H "escape:\"
-    -H "skip_lines:2"
-    -T streamload_example.csv 
+```shell
+curl --location-trusted -u <doris_user>:<doris_password> \
+    -H "Expect:100-continue" \
+    -H "line_delimiter:\n" \
+    -H "columns_delimiter:|" \
+    -H "enclose:'" \
+    -H "escape:\\" \
+    -H "skip_lines:2" \
+    -T streamload_example.csv \
     -XPUT http://<fe_ip>:<fe_http_port>/api/testdb/test_streamload/_stream_load
 ```
 
 [Broker Load](./import-way/broker-load-manual.md)
-```
-LOAD LABEL example_db.exmpale_label_1
+```sql
+LOAD LABEL example_db.example_label_1
 (
     DATA INFILE("s3://your_bucket_name/your_file.txt")
     INTO TABLE load_test
@@ -93,7 +93,7 @@ WITH S3
 ```
 
 [Routine Load](./import-way/routine-load-manual.md)
-```
+```sql
 CREATE ROUTINE LOAD demo.kafka_job01 ON routine_test01
      COLUMNS TERMINATED BY "|",
      COLUMNS(id, name, age)
@@ -112,7 +112,7 @@ CREATE ROUTINE LOAD demo.kafka_job01 ON routine_test01
 ```
 
 [MySQL Load](./import-way/mysql-load-manual.md)
-```
+```sql
 LOAD DATA LOCAL
 INFILE "testData"
 INTO TABLE testDb.testTbl
@@ -136,8 +136,8 @@ Doris 支持导入 JSON 格式的数据。本文档主要说明在进行 JSON �
 - [Stream Load](./import-way/stream-load-manual.md)
 - [Broker Load](./import-way/broker-load-manual.md)
 - [Routine Load](./import-way/routine-load-manual.md)
-- [INSERT INTO FROM S3 TVF](../../sql-manual/sql-functions/table-functions/s3)
-- [INSERT INTO FROM HDFS TVF](../../sql-manual/sql-functions/table-functions/hdfs)
+- [INSERT INTO FROM S3 TVF](../../sql-manual/sql-functions/table-valued-functions/s3)
+- [INSERT INTO FROM HDFS TVF](../../sql-manual/sql-functions/table-valued-functions/hdfs)
 
 ### 支持的 JSON 格式
 
@@ -204,7 +204,7 @@ Object 表示的一行数据即表示要导入的一行数据，示例如下：
 
 - fuzzy_parse 
 
-在 [STREAM LOAD](../../sql-manual/sql-statements/Data-Manipulation-Statements/Load/STREAM-LOAD.md)中，可以添加 `fuzzy_parse` 参数来加速 JSON 数据的导入效率。
+在 [STREAM LOAD](../../data-operate/import/import-way/stream-load-manual.md)中，可以添加 `fuzzy_parse` 参数来加速 JSON 数据的导入效率。
 
 这个参数通常用于导入 **以 Array 表示的多行数据** 这种格式，所以一般要配合 `strip_outer_array=true` 使用。
 
@@ -332,7 +332,7 @@ JSON Path 用于指定如何对 JSON 格式中的数据进行抽取，而 Column
 
 表结构：
 
-```
+```sql
 k2 int, k1 int
 ```
 
@@ -391,7 +391,7 @@ curl -v --location-trusted -u root: -H "format: json" -H "jsonpaths: [\"$.k2\", 
 相比于导入语句 1 和导入语句 2 的表结构，这里增加`k1_copy`列。
 表结构：
 
-```
+```sql
 k2 int, k1 int, k1_copy int
 ```
 如果你想将 json 中的某一字段多次赋予给表中几列，那么可以在 jsonPaths 中多次指定该列，并且依次指定映射顺序。示例如下：
@@ -421,13 +421,13 @@ curl -v --location-trusted -u root: -H "format: json" -H "jsonpaths: [\"$.k2\", 
 相比于导入语句 1 和导入语句 2 的表结构，这里增加`k1_nested1`,`k1_nested2`列。
 表结构：
 
-```
+```text
 k2 int, k1 int, k1_nested1 int, k1_nested2 int
 ```
 如果你想将 json 中嵌套的多级同名字段赋予给表中不同的列，那么可以在 jsonPaths 中指定该列，并且依次指定映射顺序。示例如下：
 
 ```shell
-curl -v --location-trusted -u root: -H "format: json" -H "jsonpaths: [\"$.k2\", \"$.k1\",\"$.k3.k1\",\"$.k3.k1_nested.k1\" -H "columns: k2,k1,k1_nested1,k1_nested2" -T example.json http://127.0.0.1:8030/api/db1/tbl1/_stream_load
+curl -v --location-trusted -u root: -H "format: json" -H "jsonpaths: [\"$.k2\", \"$.k1\",\"$.k3.k1\",\"$.k3.k1_nested.k1\"]" -H "columns: k2,k1,k1_nested1,k1_nested2" -T example.json http://127.0.0.1:8030/api/db1/tbl1/_stream_load
 ```
 
 上述示例会按 JSON Path 中字段的顺序抽取后，指定第一列为表中 k2 列的值，而第二列为表中 k1 列的值，第三列嵌套类型中的 k1 列为表中 k1_nested1 列的值，由此可知 k3.k1_nested.k1 列为表中 k1_nested2 列的值。最终导入的数据结果如下：
@@ -537,7 +537,7 @@ curl -v --location-trusted -u root: -H "format: json" -H "strip_outer_array: tru
 
 ```text
 id      INT     NOT NULL,
-city    VARHCAR NULL,
+city    VARCHAR NULL,
 code    INT     NULL
 ```
 
@@ -627,12 +627,12 @@ curl --location-trusted -u user:passwd -H "format: json" -H "jsonpaths: [\"$.id\
 
 4. 以多行 Object 形式导入多行数据
 
- ```json
- {"id": 100, "city": "beijing", "code" : 1}
- {"id": 101, "city": "shanghai"}
- {"id": 102, "city": "tianjin", "code" : 3}
- {"id": 103, "city": "chongqing", "code" : 4}
- ```
+```json
+{"id": 100, "city": "beijing", "code" : 1}
+{"id": 101, "city": "shanghai"}
+{"id": 102, "city": "tianjin", "code" : 3}
+{"id": 103, "city": "chongqing", "code" : 4}
+```
 
 StreamLoad 导入：
 
@@ -642,7 +642,7 @@ StreamLoad 导入：
 
 导入结果：
 
-```
+```text
 100     beijing                     1
 101     shanghai                    NULL
 102     tianjin                     3
@@ -680,11 +680,11 @@ curl --location-trusted -u user:passwd -H "format: json" -H "jsonpaths: [\"$.id\
 ```
 
 ```shell
-curl --location-trusted -u root:  -H ":0.01" -H "format:json" -H "timeout:300" -T test_decimal.json http://localhost:8035/api/example_db/array_test_decimal/_stream_load
+curl --location-trusted -u root:  -H "max_filter_ratio:0.01" -H "format:json" -H "timeout:300" -T test_decimal.json http://localhost:8030/api/example_db/array_test_decimal/_stream_load
 ```
 
 导入结果：
-```
+```shell
 MySQL > select * from array_test_decimal;
 +------+----------------------------------+
 | k1   | k2                               |
@@ -700,11 +700,11 @@ MySQL > select * from array_test_decimal;
 ```
 
 ```shell
-curl --location-trusted -u root:  -H "max_filter_ratio:0.01" -H "format:json" -H "timeout:300" -T test_largeint.json http://localhost:8035/api/example_db/array_test_largeint/_stream_load
+curl --location-trusted -u root:  -H "max_filter_ratio:0.01" -H "format:json" -H "timeout:300" -T test_largeint.json http://localhost:8030/api/example_db/array_test_largeint/_stream_load
 ```
 
 导入结果：
-```
+```shell
 MySQL > select * from array_test_largeint;
 +------+------------------------------------------------------------------------------------+
 | k1   | k2                                                                                 |
@@ -724,24 +724,24 @@ Routine Load 对 JSON 数据的处理原理和 Stream Load 相同。在此不再
 以下导入方式支持 CSV 格式的数据导入：
 - [Stream Load](./import-way/stream-load-manual.md)
 - [Broker Load](./import-way/broker-load-manual.md)
-- [INSERT INTO FROM S3 TVF](../../sql-manual/sql-functions/table-functions/s3)
-- [INSERT INTO FROM HDFS TVF](../../sql-manual/sql-functions/table-functions/hdfs)
+- [INSERT INTO FROM S3 TVF](../../sql-manual/sql-functions/table-valued-functions/s3)
+- [INSERT INTO FROM HDFS TVF](../../sql-manual/sql-functions/table-valued-functions/hdfs)
 
 ### 导入示例
 
 [Stream Load](./import-way/stream-load-manual.md) 
 
-```
-curl --location-trusted -u <doris_user>:<doris_password>
-    -H "Expect:100-continue"
-    -H "format:parquet"
-    -T streamload_example.parquet
+```shell
+curl --location-trusted -u <doris_user>:<doris_password> \
+    -H "Expect:100-continue" \
+    -H "format:parquet" \
+    -T streamload_example.parquet \
     -XPUT http://<fe_ip>:<fe_http_port>/api/testdb/test_streamload/_stream_load
 ```
 
 [Broker Load](./import-way/broker-load-manual.md)
-```
-LOAD LABEL example_db.exmpale_label_1
+```sql
+LOAD LABEL example_db.example_label_1
 (
     DATA INFILE("s3://your_bucket_name/your_file.parquet")
     INTO TABLE load_test
@@ -761,24 +761,24 @@ WITH S3
 以下导入方式支持 CSV 格式的数据导入：
 - [Stream Load](./import-way/stream-load-manual.md)
 - [Broker Load](./import-way/broker-load-manual.md)
-- [INSERT INTO FROM S3 TVF](../../sql-manual/sql-functions/table-functions/s3)
-- [INSERT INTO FROM HDFS TVF](../../sql-manual/sql-functions/table-functions/hdfs)
+- [INSERT INTO FROM S3 TVF](../../sql-manual/sql-functions/table-valued-functions/s3)
+- [INSERT INTO FROM HDFS TVF](../../sql-manual/sql-functions/table-valued-functions/hdfs)
 
 ### 导入示例
 
 [Stream Load](./import-way/stream-load-manual.md) 
 
-```
-curl --location-trusted -u <doris_user>:<doris_password>
-    -H "Expect:100-continue"
-    -H "format:orc"
-    -T streamload_example.orc
+```shell
+curl --location-trusted -u <doris_user>:<doris_password> \
+    -H "Expect:100-continue" \
+    -H "format:orc" \
+    -T streamload_example.orc \
     -XPUT http://<fe_ip>:<fe_http_port>/api/testdb/test_streamload/_stream_load
 ```
 
 [Broker Load](./import-way/broker-load-manual.md)
-```
-LOAD LABEL example_db.exmpale_label_1
+```sql
+LOAD LABEL example_db.example_label_1
 (
     DATA INFILE("s3://your_bucket_name/your_file.orc")
     INTO TABLE load_test

@@ -45,7 +45,7 @@ Doris 保证自增列上自动生成的值是稠密的，但**不能保证**在�
 
 ## 语法
 
-要使用自增列，需要在建表[CREATE-TABLE](../sql-manual/sql-statements/Data-Definition-Statements/Create/CREATE-TABLE)时为对应的列添加`AUTO_INCREMENT`属性。若要手动指定自增列起始值，可以通过建表时`AUTO_INCREMENT(start_value)`语句指定，如果未指定，则默认起始值为 1。
+要使用自增列，需要在建表[CREATE-TABLE](../sql-manual/sql-statements/table-and-view/table/CREATE-TABLE)时为对应的列添加`AUTO_INCREMENT`属性。若要手动指定自增列起始值，可以通过建表时`AUTO_INCREMENT(start_value)`语句指定，如果未指定，则默认起始值为 1。
 
 ### 示例
 
@@ -452,7 +452,7 @@ select * from records_tbl order by user_id, name limit 100;
 获取第 2 页的数据可以使用如下 sql 进行查询：
 
 ```sql
-select * from records_tbl order by user_id, name limit 100, offset 100;
+select * from records_tbl order by user_id, name limit 100 offset 100;
 ```
 
 然而，当进行深分页查询时 (offset 很大时)，即使实际需要需要的数据行很少，该方法依然会将全部数据读取到内存中进行全量排序后再进行后续处理，这种方法比较低效。可以通过自增列给每行数据一个唯一值，在查询时就可以通过记录之前页面`unique_value`列的最大值`max_value`，然后使用 `where unique_value > max_value limit rows_per_page` 的方式通过提下推谓词提前过滤大量数据，从而更高效地实现分页。

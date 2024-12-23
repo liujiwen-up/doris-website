@@ -29,7 +29,7 @@ The DELETE statement conditionally deletes data from a specified table or partit
 
 The DELETE statement generally requires the specification of tables and partitions as well as deletion conditions to filter the data to be deleted, and will delete data from both the base and rollup tables.
 
-The syntax of the DELETE statement is detailed in the [DELETE](../../sql-manual/sql-statements/Data-Manipulation-Statements/Manipulation/DELETE) syntax. Unlike the Insert into command, Delete cannot specify `label` manually. For the concept of `label` , refer to the [Insert Into](../../data-operate/import/insert-into-manual) documentation.
+The syntax of the DELETE statement is detailed in the [DELETE](../../sql-manual/sql-statements/data-modification/DML/DELETE) syntax. Unlike the Insert into command, Delete cannot specify `label` manually. For the concept of `label` , refer to the [Insert Into](../../data-operate/import/insert-into-manual) documentation.
 
 ### Delete by Specifying a Filter Predicate
 
@@ -185,7 +185,7 @@ Delete command is a SQL command that return results synchronously. The results a
 If Delete completes successfully and is visible, the following results are returned.`Query OK`indicates success.
 
 ```sql
-mysql delete from test_tbl PARTITION p1 where k1 = 1;
+mysql> delete from test_tbl PARTITION p1 where k1 = 1;
 Query OK, 0 rows affected (0.04 sec)
 {'label':'delete_e7830c72-eb14-4cb9-bbb6-eebd4511d251', 'status':'VISIBLE', 'txnId':'4005'}
 ```
@@ -199,7 +199,7 @@ If the commit has been successful, then it can be assumed that it will eventuall
  If Delete has been submitted and executed, but the release version is still not published and visible, the following result will be returned:
 
 ```sql
-mysql delete from test_tbl PARTITION p1 where k1 = 1;
+mysql> delete from test_tbl PARTITION p1 where k1 = 1;
 Query OK, 0 rows affected (0.04 sec)
 {'label':'delete_e7830c72-eb14-4cb9-bbb6-eebd4511d251', 'status':'COMMITTED', 'txnId':'4005', 'err':'delete job is committed but may be taking effect later' }
 ```
@@ -221,14 +221,14 @@ The result will also return a json string:
 If the Delete statement fails to commit, the transaction will be automatically aborted by Doris and the following result will be returned:
 
 ```sql
-mysql delete from test_tbl partition p1 where k1  80;
+mysql> delete from test_tbl partition p1 where k1 > 80;
 ERROR 1064 (HY000): errCode = 2, detailMessage = {Cause of error}
 ```
 
 For example, a timeout deletion will return the timeout time and the outstanding `(tablet=replica)`
 
 ```sql
-mysql delete from test_tbl partition p1 where k1  80;
+mysql> delete from test_tbl partition p1 where k1 > 80;
 ERROR 1064 (HY000): errCode = 2, detailMessage = failed to delete replicas from job: 4005, Unfinished replicas:10000=60000, 10001=60000, 10002=60000
 ```
 
@@ -285,7 +285,7 @@ SHOW DELETE [FROM db_name]
 ### Example
 
 ```sql
-mysql show delete from test_db;
+mysql> show delete from test_db;
 +-----------+---------------+---------------------+-----------------+----------+
 | TableName | PartitionName | CreateTime          | DeleteCondition | State    |
 +-----------+---------------+---------------------+-----------------+----------+
